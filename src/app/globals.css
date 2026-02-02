@@ -1,26 +1,3571 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================
+   1) Tokens / Identidade
+   ========================= */
+:root{
+  /* Brand */
+  --brand: #BD1B5D;
+  --brand-2: #a5164f;
+  --brand-3: #36a9f0;
+
+  /* Text */
+  --fg: #0b0b0f;
+  --muted: rgba(11,11,15,.62);
+
+  /* Surfaces */
+  --border: rgba(11,11,15,.10);
+  --card: rgba(255,255,255,.72);
+  --card-strong: rgba(255,255,255,.88);
+
+  /* Radius */
+  --r-sm: 14px;
+  --r-md: 18px;
+  --r-lg: 24px;
+
+  /* Background mixer (crossfade by scroll) */
+  --bg-a: #ffffff;
+  --bg-b: #BD1B5D;
+
+  --wash-a: radial-gradient(900px circle at 55% 0%, rgba(189,27,93,.14), transparent 60%);
+  --wash-b: radial-gradient(900px circle at 50% 0%, rgba(255,255,255,.16), transparent 60%);
+
+  --mix: 0; /* 0..1 */
+  --hero-overlay: 1; /* 0..1 */
+
+  --shadow-elevated: 0 28px 70px rgba(0,0,0,.25);
+
+  --header-h: 64px; /* ajuste se seu header for maior/menor */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* =========================
+   2) Reset básico
+   ========================= */
+*,
+*::before,
+*::after{ box-sizing: border-box; }
+
+html, body{ height: 100%; }
+
+body{
+  margin: 0;
+  color: var(--fg);
+  background: transparent;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  line-height: 1.6;
+  text-rendering: geometricPrecision;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+a{ color: inherit; text-decoration: none; }
+img{ max-width: 100%; display: block; }
+
+/* =========================
+   3) Fundo global (Horizon-style)
+   ========================= */
+.site-bg{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* camada A */
+.site-bg::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background: var(--wash-a), var(--bg-a);
+  opacity: calc(1 - var(--mix));
+  transition: opacity 80ms linear;
+}
+
+/* camada B */
+.site-bg::after{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background: var(--wash-b), var(--bg-b);
+  opacity: var(--mix);
+  transition: opacity 80ms linear;
+}
+
+/* grain premium (bem sutil) */
+.site-bg > .noise{
+  position:absolute;
+  inset:0;
+  opacity:.065;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+}
+
+/* =========================
+   4) Utilitários globais
+   ========================= */
+.container{
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+@media (min-width: 1024px){
+  .container{
+    max-width: 1240px;
+    padding-left: 24px;
+    padding-right: 24px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.section{
+  padding: 96px 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 768px){
+  .section{ padding: 72px 0; }
+}
+
+/* glass */
+.glass{
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--r-md);
+  box-shadow: 0 22px 50px rgba(0,0,0,.12);
+}
+
+/* text helpers */
+.muted{ color: var(--muted); }
+
+/* =========================
+   5) Hero (sophisticated frame)
+   ========================= */
+   .hero-container {
+  width: 100%;
+  max-width: none;
+}
+
+.hero-frame{
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  max-width: 100%;
+  height: 700px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: #0b0b10;
+  box-shadow: 0 40px 90px rgba(0,0,0,.35);
+}
+
+.hero-media{
+  position: absolute;
+  inset: 0;
+}
+
+.hero-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(1.05) contrast(1.05);
+  transform: scale(1.04);
+}
+
+.hero-overlay{
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(120deg, rgba(8,8,12,.85) 10%, rgba(8,8,12,.35) 55%, rgba(189,27,93,.45) 100%);
+  opacity: calc(0.55 + (var(--hero-overlay, 1) * 0.35));
+  transition: opacity 200ms ease;
+}
+
+.hero-glow{
+  position: absolute;
+  inset: -20%;
+  opacity: .9;
+  background:
+    radial-gradient(60% 50% at 18% 15%, rgba(189,27,93,.35), transparent 60%),
+    radial-gradient(50% 40% at 80% 20%, rgba(0,0,0,.22), transparent 65%); /* CHANGED (was white) */
+  mix-blend-mode: multiply; /* CHANGED (was screen) */
+}
+
+.hero-word{
+  position: absolute;
+  right: 4%;
+  top: 10%;
+  z-index: 1;
+  font-size: clamp(40px, 12vw, 160px);
+  letter-spacing: -0.03em;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: .9;
+  color: rgba(255,255,255,.12);
+  pointer-events: none;
+  user-select: none;
+}
+
+.glass-dark{
+  background: rgba(10,10,14,.45);
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--r-md);
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+  color: #fff;
+}
+
+@media (max-width: 768px){
+  .hero-frame{ min-height: auto; }
+  .hero-word{ font-size: clamp(36px, 18vw, 96px); opacity: .16; }
+}
+
+/* =========================
+   HERO – versão institucional rosa
+   ========================= */
+
+.hero-frame--solid{
+  background: var(--brand);
+  color: #fff;
+  box-shadow: var(--shadow-elevated);
+  border: none;
+}
+
+
+
+/* KPIs no fundo rosa */
+.hero-kpi--pink{
+  background: rgb(255, 255, 255);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 18px;
+  box-shadow: var(--shadow-elevated);
+}
+
+/* imagem à direita */
+.hero-image{
+  height: 520px;
+  border-radius: 28px;
+  overflow: visible;      /* <- em vez de hidden */
+  position: relative;
+  display: grid;
+  place-items: end center;
+  padding: 24px 12px 0;   /* dá respiro */
+}
+
+
+@media (max-width: 768px){
+  .hero-image{ height: 320px; }
+}
+
+.hero-image{
+  position: relative;
+}
+
+/* glow suave atrás */
+.hero-image::before{
+  content:"";
+  position:absolute;
+  inset:auto;
+  width: 420px;
+  height: 420px;
+  right: 10%;
+  bottom: 8%;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.26), transparent 65%); /* CHANGED (was white) */
+  filter: blur(2px);
+  pointer-events:none;
+  z-index: 0;
+}
+
+/* sombra “chão” */
+.hero-image::after{
+  content:"";
+  position:absolute;
+  width: 360px;
+  height: 70px;
+  right: 12%;
+  bottom: 4%;
+  background: radial-gradient(closest-side, rgba(0,0,0,.22), transparent 70%);
+  filter: blur(10px);
+  pointer-events:none;
+  z-index: 0;
+}
+
+.hero-image img{
+  position: relative;
+  z-index: 1;
+}
+
+.hero-image img{
+  -webkit-mask-image: radial-gradient(circle at 55% 35%, #000 60%, transparent 78%);
+  mask-image: radial-gradient(circle at 55% 35%, #000 60%, transparent 78%);
+}
+
+.hero-grid{
+  position: relative;
+}
+
+
+/* wash branco suave no lado direito do grid */
+.hero-grid::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+
+  background: linear-gradient( /* CHANGED (was white wash) */
+    to left,
+    rgba(0, 0, 0, 0.22),
+    rgba(0,0,0,.14) 18%,
+    rgba(0,0,0,0) 35%
+  );
+}
+
+/* =========================
+PATCH HERO MOBILE (ordem, padding e “botão na base da imagem”)
+Cole no FINAL da área do HERO no globals.css
+========================= */
+
+/* ✅ no mobile, não pode ter height fixo */
+@media (max-width: 768px){
+  .hero-frame{
+    height: auto;       /* <- mata o 700px */
+    min-height: 0;
+  }
+}
+
+/* ✅ novo grid por áreas (mobile: copy -> image -> cta -> kpis) */
+.hero-grid{
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "copy"
+    "image"
+    "cta"
+    "kpis";
+  gap: 18px;
+  padding: 22px 16px 18px; /* respiro lateral no mobile */
+  height: 100%;
+  align-items: start;
+}
+
+/* garante que o ::after do hero-grid não “passe por cima” */
+.hero-copy,
+.hero-mediaWrap,
+.hero-ctaWrap,
+.hero-kpis{
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy{
+  grid-area: copy;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.hero-mediaWrap{
+  grid-area: image;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+/* imagem um pouco maior no mobile */
+@media (max-width: 768px){
+  .hero-image{
+    height: 360px;          /* era 320 */
+    padding: 18px 10px 0;
+  }
+
+  /* centraliza glow/sombra no mobile (antes era “right:10%”) */
+  .hero-image::before{
+    width: 360px;
+    height: 360px;
+    right: 50%;
+    bottom: 18%;
+    transform: translateX(50%);
+  }
+  .hero-image::after{
+    width: 320px;
+    height: 60px;
+    right: 50%;
+    bottom: 6%;
+    transform: translateX(50%);
+  }
+}
+
+/* CTA “grudado” na base da imagem */
+.hero-ctaWrap{
+  grid-area: cta;
+  display: flex;
+  justify-content: center;
+  z-index: 3;
+  margin-top: -14px; /* <- cola no pé da imagem */
+  padding: 0 2px;
+}
+
+/* CTA responsivo (sem encostar nas bordas) */
+.hero-ctaWrap > button{
+  width: min(420px, 100%);
+  justify-content: space-between;
+}
+
+/* KPIs centralizados embaixo */
+.hero-kpis{
+  grid-area: kpis;
+  width: min(520px, 100%);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 640px){
+  .hero-kpis{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+}
+
+/* ✅ DESKTOP mantém layout original: esquerda (copy/cta/kpis) + direita (imagem) */
+@media (min-width: 768px){
+  .hero-grid{
+    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-areas:
+      "copy image"
+      "cta  image"
+      "kpis image";
+    gap: 40px;
+    padding: 40px; /* equivalente ao md:p-10 */
+    align-items: center;
+  }
+
+  .hero-copy{
+    text-align: left;
+    margin-inline: 0;
+  }
+
+  .hero-ctaWrap{
+    justify-content: flex-start;
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .hero-ctaWrap > button{
+    width: auto;
+  }
+
+   .hero-mediaWrap{
+    width: 100%;
+    padding: 0;
+  }
+
+  /* aumenta a “caixa” da imagem */
+  .hero-image{
+    width: min(620px, 100%); /* antes era 100% solto */
+    margin-inline: auto;
+    height: 400px;           /* sobe um pouco pra ficar proporcional */
+    padding: 14px 0 0;       /* tira padding lateral que deixa estreito */
+  }
+
+  /* aumenta a pessoa (mais “larga”) */
+  .hero-image img{
+    transform: scale(1.12);  /* você pode subir até 1.18 se quiser */
+    transform-origin: bottom center;
+  }
+
+  .hero-kpis{
+    width: 100%;
+    margin-inline: 0;
+  }
+}
+
+/* =========================
+   HERO – Imagem Desktop/Mobile (BOTTOM + OVERLAP)
+   Cole no FINAL do CSS do Hero
+========================= */
+
+.hero-mediaWrap{
+  align-self: stretch; /* deixa a coluna da imagem ocupar a altura do hero */
+}
+
+.hero-picture{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;     /* gruda embaixo */
+  justify-content: center;
+}
+
+.hero-person{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;       /* cutout proporcional */
+  object-position: bottom center;
+  transform-origin: bottom center;
+}
+
+/* ✅ DESKTOP: encostar no bottom do hero-frame */
+@media (min-width: 768px){
+  .hero-mediaWrap{
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* A caixa da imagem agora vira “altura total” da coluna */
+  .hero-image{
+    height: 100%;
+    padding: 0 12px 0;     /* remove padding-top que faz ela “flutuar” */
+    place-items: end center;
+  }
+
+  /* dá uma presença maior sem estourar */
+  .hero-person{
+    transform: scale(1.06);
+  }
+
+  /* ajusta o glow/sombra para acompanhar o bottom */
+  .hero-image::before{ bottom: 10%; }
+  .hero-image::after{ bottom: 2%; }
+}
+
+/* ✅ MOBILE: mulher atrás do botão e dos KPIs, mas sem sumir inteira */
+@media (max-width: 768px){
+  /* camadas: imagem atrás, UI na frente */
+  .hero-mediaWrap{
+    z-index: 1;
+    pointer-events: none;   /* botão sempre clicável */
+    margin-bottom: -44px;   /* puxa CTA + KPIs pra cima (sobre a mulher) */
+  }
+
+  .hero-copy{ z-index: 4; }
+  .hero-ctaWrap{ z-index: 3; }
+  .hero-kpis{ z-index: 3; margin-top: -10px; } /* KPI sobe um pouco e cobre “só uma parte” */
+
+  /* deixa a mulher maior/larga no mobile */
+  .hero-image{
+    width: min(620px, 100%);
+    margin-inline: auto;
+    height: 420px;
+    padding: 10px 0 0;
+    margin-top: 60px      /* tira lateral que deixa estreito */
+  }
+
+  .hero-person{
+    transform: scale(1.12);
+  }
+
+  /* mantém glow/sombra centralizados */
+  .hero-image::before{
+    right: 50%;
+    transform: translateX(50%);
+  }
+  .hero-image::after{
+    right: 50%;
+    transform: translateX(50%);
+  }
+}
+
+/* ✅ DESKTOP: mulher maior sem perder o "encostar no bottom" */
+@media (min-width: 768px){
+  .hero-image{
+    width: min(760px, 100%);  /* aumenta a “caixa” */
+    margin-left: auto;
+  }
+
+  .hero-person{
+    transform: scale(1.36);   /* era 1.06 / 1.12 — deixa bem mais presente */
+  }
+}
+
+/* ✅ DESKTOP: sombra chão mais forte e proporcional */
+@media (min-width: 768px){
+  .hero-image::after{
+    width: min(520px, 78%);         /* mais larga */
+    height: 92px;                  /* mais “espalhada” */
+    right: 50%;                    /* centraliza */
+    bottom: 1.5%;
+    transform: translateX(50%);
+    background: radial-gradient(
+      closest-side,
+      rgba(0, 0, 0, 0.541),             /* mais escura */
+      rgba(0,0,0,.14) 40%,
+      transparent 72%
+    );
+    filter: blur(14px);            /* mais suave, porém forte */
+    opacity: 1;
+  }
+}
+
+/* PATCH — Hero mobile: CTA abaixo do texto + KPIs mais para baixo */
+@media (max-width: 768px){
+  /* ordem visual (seu JSX já vai estar certo, mas isso garante) */
+  .hero-grid{
+    grid-template-areas:
+      "copy"
+      "cta"
+      "image"
+      "kpis";
+  }
+
+  /* antes estava com margin-top negativo pra “colar” na imagem */
+  .hero-ctaWrap{
+    margin-top: 12px;
+  }
+
+  /* remove o truque de puxar tudo pra cima */
+  .hero-mediaWrap{
+    margin-bottom: 0;
+    pointer-events: none; /* pode manter */
+  }
+
+  /* KPIs descem um pouco */
+  .hero-kpis{
+    margin-top: 40px;
+  }
+}
+
+/* =========================
+   HERO — brilho no título + dourado no 98% + CTA mais chamativo
+   Cole no FINAL do CSS do Hero
+========================= */
+
+/* brilho sutil no título (mantém branco) */
+.hero-titleGlow{
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.28),
+    0 10px 34px rgba(0,0,0,.34),
+    0 0 18px rgba(0,0,0,.32); /* CHANGED (was white) */
+}
+
+/* “98%” dourado com glow (sem fugir do premium) */
+.hero-gold{
+  background: linear-gradient(180deg, #fff4c2 0%, #d4af37 45%, #b8860b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 0 18px rgba(212,175,55,.25),
+    0 2px 10px rgba(0,0,0,.22);
+}
+
+/* CTA: mantém cores, mas adiciona “shine” + presença */
+.hero-ctaBtn{
+  box-shadow:
+    0 18px 40px rgba(0,0,0,.25),
+    0 0 0 1px rgba(0,0,0,.12) inset; /* CHANGED (was white) */
+}
+
+/* brilho passando por cima (só no hover) */
+.hero-ctaBtn::before{
+  content:"";
+  position:absolute;
+  top:-60%;
+  left:-55%;
+  width: 70%;
+  height: 220%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(189,27,93,.10) 40%,
+    rgba(189,27,93,.20) 50%,
+    rgba(189,27,93,.10) 60%,
+    transparent 100%
+  );
+  transform: rotate(10deg) translateX(-10%);
+  transition: transform .65s ease;
+  pointer-events:none;
+}
+
+.hero-ctaBtn:hover::before{
+  transform: rotate(10deg) translateX(220%);
+}
+
+/* “pulse” bem sutil quando parado (respeita reduce motion) */
+@media (prefers-reduced-motion: no-preference){
+  .hero-ctaBtn{
+    animation: heroCtaBreath 2.9s ease-in-out infinite;
+  }
+  .hero-ctaBtn:hover{
+    animation: none;
+  }
+}
+
+@keyframes heroCtaBreath{
+  0%,100%{
+    box-shadow:
+      0 18px 40px rgba(0,0,0,.25),
+      0 0 0 1px rgba(0,0,0,.12) inset; /* CHANGED (was white) */
+  }
+  50%{
+    box-shadow:
+      0 24px 60px rgba(0,0,0,.30),
+      0 0 0 1px rgba(0,0,0,.16) inset; /* CHANGED (was white) */
+  }
+}
+
+/* =========================
+   HERO — CONTRASTE (apenas no hero)
+   Cole no FINAL do CSS do Hero
+========================= */
+
+/* 1) garante que nada claro “lave” o hero por cima */
+#inicio .hero-grid::after{
+  background: linear-gradient(
+    to left,
+    rgba(0,0,0,.24),
+    rgba(0,0,0,.14) 18%,
+    rgba(0,0,0,0) 35%
+  );
+  opacity: .75;               /* controla a força do wash */
+}
+
+/* 2) glow atrás da pessoa: deixa escuro (pra não estourar o branco e apagar letras) */
+#inicio .hero-image::before{
+  background: radial-gradient(circle, rgba(0,0,0,.28), transparent 65%);
+  filter: blur(6px);          /* mais suave, sem “explodir” */
+  opacity: .9;
+}
+
+/* 3) título e descrição com sombra escura (nitidez e destaque) */
+#inicio [data-hero="title"]{
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.26),
+    0 14px 34px rgba(0,0,0,.34),
+    0 0 14px rgba(0,0,0,.20);
+}
+
+#inicio [data-hero="desc"]{
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.22),
+    0 10px 26px rgba(0,0,0,.28);
+}
+
+/* 4) opcional: badge fica mais “crisp” sem glow claro */
+#inicio [data-hero="badge"]{
+  box-shadow: 0 18px 40px rgba(0,0,0,.20); /* no lugar de qualquer sensação “clara” */
+}
+
+
+
+
+
+.with-header-offset{
+  padding-top: var(--header-h);
+}
+
+/* seção */
+.clean-your-name{
+  background: #fff;
+}
+
+#clean-your-name-content{
+  position: relative;
+  display: flex ;
+  align-items: center ;
+  flex-direction: column;
+}
+
+.clean-your-name-title{
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-size: clamp(28px, 3vw, 44px);
+  color: var(--fg);
+  max-width: 920px;
+}
+
+/* underline igual (risquinho embaixo da palavra) */
+.underline--text{
+  background-image: linear-gradient(to bottom, transparent 65%, rgba(189,27,93,.22) 65%);
+  background-size: 100% 100%;
+  border-radius: 10px;
+  padding: 0 .12em;
+}
+
+/* círculo em volta do texto (fácil) */
+.circle--text{
+  position: relative;
+  display: inline-block;
+  padding: 0 .18em;
+}
+.circle--text::after{
+  content:"";
+  position:absolute;
+  inset: -0.25em -0.45em -0.22em -0.45em;
+  border-radius: 999px;
+  border: 2px solid rgba(189,27,93,.22);
+  transform: rotate(-6deg);
+  pointer-events:none;
+}
+
+
+/* lista (mobile) */
+#clean-your-name-text{
+  display: grid;
+  gap: 22px;
+  max-width: 980px;
+  grid-template-columns: 1fr;
+}
+
+/* desktop: 3 colunas */
+@media (min-width: 900px){
+  #clean-your-name-text{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch; /* mesma altura por linha */
+  }
+}
+
+/* item */
+.clean-step{
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+/* número grande (substitui /static/images/1.png etc) */
+.clean-step-number{
+  width: 92px;
+  display: grid;
+  place-items: start center;
+  padding-top: 4px;
+}
+.clean-step-number span{
+  font-weight: 900;
+  line-height: 1;
+  font-size: 86px;
+  color: rgba(11,11,15,.10);
+}
+
+/* corpo */
+.clean-step-body{
+  position: relative;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: 0px 4px 2px rgba(0,0,0,0.05);
+  border: 1px solid rgba(11,11,15,.06);
+}
+
+.clean-step-title{
+  margin: 0;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--fg);
+}
+
+.sub--clean-your-name{
+  color: var(--brand);
+  font-weight: 900;
+}
+
+.clean-step-desc{
+  margin: 10px 0 0;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(11,11,15,.68);
+  max-width: 72ch;
+}
+
+/* enfeites (equivalente aos pngs destaque-circulo / plim) */
+.deco{
+  position: absolute;
+  left: 10px;
+  width: 78px;
+  height: 40px;
+  pointer-events: none;
+  opacity: .9;
+}
+
+.deco-circle{
+  border: 2px solid rgba(189,27,93,.20);
+  border-radius: 999px;
+  transform: rotate(-10deg);
+}
+
+.deco-spark::before,
+.deco-spark::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(189,27,93,.20) 0 12px, transparent 13px),
+    radial-gradient(circle at 45% 25%, rgba(189,27,93,.16) 0 10px, transparent 11px),
+    radial-gradient(circle at 75% 55%, rgba(189,27,93,.14) 0 9px, transparent 10px);
+}
+
+/* responsivo (fica igual: número em cima/menor) */
+@media (max-width: 720px){
+  .clean-step{
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+  }
+  .clean-step-number{
+    width: 64px;
+  }
+  .clean-step-number span{
+    font-size: 58px;
+  }
+  .clean-step-body{
+    padding: 12px 14px;
+  }
+  .clean-step-title{
+    font-size: 18px;
+  }
+}
+
+/* GRID: 3 cards lado a lado no desktop, stack no mobile */
+.clean-steps-grid{
+  display: grid;
+  gap: 22px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px){
+  .clean-steps-grid{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* garante que os 3 itens na mesma linha tenham a MESMA altura */
+@media (min-width: 900px){
+  .clean-steps-grid{
+    align-items: stretch; /* estica as células */
+  }
+
+  .clean-step{
+    height: 100%;
+    align-content: start;
+  }
+
+  .clean-step-body{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* empurra qualquer coisa opcional p/ baixo (se tiver botão/cta depois) */
+  .clean-step-desc{
+    margin-top: 10px;
+  }
+}
+
+
+
+/* Dentro de cada card: número em cima do card (mais bonito no layout 3 colunas) */
+@media (min-width: 900px){
+  .clean-step{
+    height: 100%;
+    display: flex;         /* <-- troca grid por flex no desktop */
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .clean-step-number{
+    width: auto;
+    place-items: start start;
+    padding-top: 0;
+  }
+
+  .clean-step-body{
+    flex: 1;               /* <-- puxa pela maior */
+    height: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .clean-step-desc{
+    margin-top: 10px;
+  }
+
+  .clean-step-number span{
+    color:  var(--brand);
+  }
+}
+
+/* =========================================
+READLINE (clean-your-name) — respiro no MOBILE
+Objetivo: nada grudado nas bordas (inclusive iPhone safe-area)
+Cole no final do globals.css
+========================================= */
+
+.clean-your-name .container.section{
+  /* mais respiro que o padrão 16px */
+  padding-left: calc(clamp(18px, 5.5vw, 28px) + env(safe-area-inset-left));
+  padding-right: calc(clamp(18px, 5.5vw, 28px) + env(safe-area-inset-right));
+}
+
+/* garante que o grid/itens usem a largura do container (sem “vazar”) */
+.clean-your-name .clean-steps-grid,
+.clean-your-name #clean-your-name-text{
+  width: 100%;
+}
+
+/* evita qualquer “encostada” por quebra/overflow */
+.clean-your-name .clean-step,
+.clean-your-name .clean-step-body{
+  min-width: 0;
+}
+
+/* micro-ajuste pra telas bem pequenas */
+@media (max-width: 380px){
+  .clean-your-name .container.section{
+    padding-left: calc(20px + env(safe-area-inset-left));
+    padding-right: calc(20px + env(safe-area-inset-right));
+  }
+}
+
+
+/* =========================================
+   PARCEIROS — CSS EDITÁVEL (escopado)
+   Seção: <section id="parceiros" ...>
+========================================= */
+/* =========================================
+   PARCEIROS — FINAL (ícones + temas)
+   Substitui TODO o bloco antigo do #parceiros
+========================================= */
+
+#parceiros{
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+
+  /* tipografia fluida */
+  --partner-title: clamp(11.5px, 3.05vw, 13.5px);
+  --partner-desc:  clamp(10.5px, 2.75vw, 12.5px);
+
+  /* tamanhos */
+  --partner-wrap:  clamp(40px, 10.5vw, 44px);
+  --partner-ico:   clamp(18px, 4.6vw, 22px);
+
+  /* espaçamentos */
+  --partner-gap:   clamp(8px, 2.2vw, 10px);
+  --partner-py:    clamp(10px, 2.7vw, 14px);
+  --partner-px:    clamp(10px, 2.7vw, 14px);
+}
+
+/* fundo */
+#parceiros .parceiros-bg{
+  position: absolute;
+  inset: 0;
+  z-index: -10;
+  background: linear-gradient(to bottom, rgba(245,245,248,1), rgba(250,250,252,1));
+}
+
+/* glows */
+#parceiros .parceiros-glow-top{
+  position: absolute;
+  top: -96px;
+  left: 50%;
+  z-index: -10;
+  transform: translateX(-50%);
+  width: 760px;
+  height: 360px;
+  border-radius: 999px;
+  
+  filter: blur(40px);
+}
+#parceiros .parceiros-glow-corner{
+  position: absolute;
+  bottom: -128px;
+  left: -128px;
+  z-index: -10;
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(11,11,15,.06), transparent 60%);
+  filter: blur(40px);
+}
+
+/* header */
+#parceiros .parceiros-title{
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+#parceiros .parceiros-subtitle{
+  margin-top: 12px;
+  font-weight: 600;
+  color: rgba(11,11,15,.62);
+}
+
+/* card container do grid */
+#parceiros .parceiros-card{
+  position: relative;
+  border-radius: 24px;
+  border: 1px solid rgba(11,11,15,.08);
+  background: rgba(255,255,255,.70);
+  box-shadow: 0 22px 50px rgba(0,0,0,.06);
+  backdrop-filter: blur(12px);
+  padding: 16px;
+}
+#parceiros .parceiros-card::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.55);
+}
+
+/* grid: altura estável por linha + cards esticados */
+#parceiros .parceiros-grid{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+  grid-auto-rows: 1fr; /* ✅ faz cada linha ter altura uniforme */
+}
+@media (min-width: 640px){
+  #parceiros .parceiros-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 768px){
+  #parceiros .parceiros-grid{
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+/* card (cada item) — versão ícone+texto */
+#parceiros .partner.partner--icon{
+  position: relative;
+  height: 100%;                 /* ✅ estica na célula */
+  min-height: 112px;            /* ✅ tamanho consistente */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--partner-gap);
+  padding: var(--partner-py) var(--partner-px);
+  overflow: hidden;
+
+  border-radius: 16px;
+  border: 1px solid rgba(11,11,15,.08);
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+
+  transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+@media (min-width: 768px){
+  #parceiros .partner.partner--icon{ min-height: 118px; }
+}
+
+/* hover do card (levantar) */
+@media (hover: hover){
+  #parceiros .partner.partner--icon:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px rgba(0,0,0,.10);
+  }
+}
+
+/* glow interno no hover */
+#parceiros .partner.partner--icon::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition: opacity .3s ease;
+  pointer-events:none;
+}
+@media (hover: hover){
+  #parceiros .partner.partner--icon:hover::before{
+    opacity:1;
+    background: radial-gradient(circle at 50% -20%, rgba(189,27,93,.14), transparent 60%);
+    filter: blur(18px);
+  }
+}
+
+/* bloco do ícone */
+#parceiros .partner-icoWrap{
+  width: var(--partner-wrap);
+  height: var(--partner-wrap);
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(11,11,15,.10);
+  background: rgba(189,27,93,.08);
+  box-shadow: 0 12px 26px rgba(0,0,0,.08), -4px 6px 0 rgba(0,0,0,.05);
+  flex: 0 0 auto;
+
+  /* ✅ NÃO use transform aqui (o Motion anima) */
+  transition: box-shadow .28s ease, background .28s ease;
+}
+#parceiros .partner-ico{
+  width: var(--partner-ico);
+  height: var(--partner-ico);
+  color: var(--brand);
+  filter: drop-shadow(-1px 1px 0 rgba(0,0,0,.10));
+}
+@media (hover: hover){
+  #parceiros .partner.partner--icon:hover .partner-icoWrap{
+    box-shadow: 0 14px 30px rgba(0,0,0,.10), -5px 7px 0 rgba(0,0,0,.06);
+    background: rgba(189,27,93,.10);
+  }
+}
+
+/* texto */
+#parceiros .partner-text{
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+#parceiros .partner-title{
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: rgba(11,11,15,.86);
+  font-size: var(--partner-title);
+  line-height: 1.15;
+
+  /* ✅ impede título “sumir” e mantém padrão */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+#parceiros .partner-desc{
+  font-weight: 700;
+  color: rgba(11,11,15,.58);
+  font-size: var(--partner-desc);
+  line-height: 1.25;
+
+  /* ✅ mantém os cards com altura uniforme */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+/* linha de confiança */
+#parceiros .parceiros-trust{
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(11,11,15,.55);
+}
+#parceiros .parceiros-dot{
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.70);
+}
+
+/* acessibilidade */
+@media (prefers-reduced-motion: reduce){
+  #parceiros .partner.partner--icon{ transition: none; }
+  #parceiros .partner-icoWrap{ transition: none; }
+  #parceiros .partner.partner--icon:hover{ transform: none; }
+}
+
+
+/* =========================================
+ O QUE FAZEMOS — Igual QuiteJá (cards brancos sólidos)
+ + detalhe 3D leve (cards + textos fora do card)
+========================================= */
+
+#oquefazemos.qjf{
+  /* fundo verde água da referência */
+  --qjf-bg:  #BD1B5D;
+  --qjf-card: #ffffff;
+  --qjf-text: #ffffff;
+  --qjf-muted: rgba(31,41,55,.78);
+
+  background: var(--qjf-bg);
+  padding: clamp(34px, 5vw, 64px) 0;
+}
+
+#oquefazemos .qjf-shell{
+  display: grid;
+  gap: 22px;
+  align-items: start;
+}
+
+@media (min-width: 1024px){
+  #oquefazemos .qjf-shell{
+    grid-template-columns: 1.08fr .92fr; /* foto maior, conteúdo menor */
+    gap: 34px;
+    align-items: start;
+  }
+}
+
+/* FOTO grande à esquerda */
+#oquefazemos .qjf-photo{
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  min-height: 360px;
+  background: #fff;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.26),
+    0 2px 0 rgba(0, 0, 0, 0.137);
+  z-index: 2;
+}
+
+@media (min-width: 1024px){
+  #oquefazemos .qjf-photo{ min-height: 540px; }
+}
+
+#oquefazemos .qjf-photoImg{
+  object-fit: cover;
+}
+
+/* DIREITA */
+#oquefazemos .qjf-right{
+  display: grid;
+  gap: 18px;
+  position: relative; z-index: 1;
+}
+
+/* Head com título + “nosso toque especial” */
+#oquefazemos .qjf-head{
+  position: relative;
+  padding-top: 6px;
+}
+
+#oquefazemos .qjf-title{
+  margin: 0;
+  color: var(--qjf-text);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  font-size: clamp(34px, 4vw, 52px);
+}
+
+/* underline tipo marca-texto da referência */
+#oquefazemos .qjf-underline{
+  position: relative;
+  display: inline-block;
+}
+#oquefazemos .qjf-underline::after{
+  content:"";
+  position:absolute;
+  left: 0;
+  right: -6px;
+  bottom: 6px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(31,41,55,.12);
+  z-index: -1;
+}
+
+/* “Nosso toque especial” fora do card
+   -> branco sólido + 3D leve (sticker) */
+#oquefazemos .qjf-note{
+  position: absolute;
+  right: 0;
+  top: 22px;
+
+  color: #ffffff;              /* branco sólido como você pediu */
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-size: 12px;
+  line-height: 1.15;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  /* 3D sticker (sem ficar futurista) */
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow:
+    0 16px 28px rgba(0,0,0,.16),
+    0 3px 0 rgba(0,0,0,.08);
+  backdrop-filter: blur(2px);
+}
+
+#oquefazemos .qjf-note::before{
+  /* setinha desenhada (bem leve) apontando pro “diferente” */
+  content:"";
+  position:absolute;
+  left: -34px;
+  top: 16px;
+  width: 34px;
+  height: 18px;
+  background:
+    radial-gradient(circle at 60% 50%, rgba(255,255,255,.0) 0 7px, rgba(255,255,255,.0) 8px),
+    linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.95));
+  mask:
+    linear-gradient(#000,#000);
+  opacity: .9;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,.18));
+  border-radius: 999px;
+}
+
+/* GRID CARDS (2x2) */
+#oquefazemos .qjf-cards{
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+  margin-top: 10px;
+}
+
+@media (min-width: 640px){
+  #oquefazemos .qjf-cards{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* CARD branco sólido (zero transparência) */
+#oquefazemos .qjf-card{
+  position: relative;
+  background: var(--qjf-card); /* branco sólido */
+  border-radius: 16px;
+  padding: 20px 18px 18px;
+  border: 1px solid rgba(17,24,39,.08);
+
+  /* sombra padrão quitejá + “3D” discreto */
+  box-shadow:
+    0 20px 34px rgba(0,0,0,.12),
+    -6px 8px 0 rgba(0,0,0,.06); /* leve projeção esquerda/baixo */
+}
+
+#oquefazemos .qjf-cardIcon{
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  color: #111827;
+
+  background: #fff;
+  border: 1px solid rgba(17,24,39,.10);
+
+  /* “ícone com corpo” (3D sutil) */
+  box-shadow:
+    0 14px 26px rgba(0,0,0,.12),
+    -4px 6px 0 rgba(0,0,0,.06);
+}
+
+#oquefazemos .qjf-cardTitle{
+  margin: 14px 0 8px;
+  color: var(--qjf-text);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+#oquefazemos .qjf-cardDesc{
+  margin: 0;
+  color: var(--qjf-muted);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+#oquefazemos .qjf-cardDesc b{
+  color: rgba(31,41,55,.92);
+}
+
+/* blob 3D flutuante no canto (bem sutil) */
+#oquefazemos .qjf-cardBlob{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.95), rgba(0,0,0,.06) 65%, rgba(0,0,0,0) 72%);
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,.12));
+  opacity: .9;
+  pointer-events: none;
+}
+
+/* responsivo: note não estourar */
+@media (max-width: 640px){
+  #oquefazemos .qjf-note{
+    position: static;
+    margin-top: 10px;
+    width: fit-content;
+  }
+  #oquefazemos .qjf-note::before{ display:none; }
+}
+
+
+/* =========================================
+ TOTAL DE PESSOAS — (escopado)
+ Seção: <section id="totaldepessoas" ...>
+ Padrão QuiteJá com identidade premium do projeto
+========================================= */
+#totaldepessoas{
+  position: relative;
+  overflow: hidden;
+  background: var(--brand-3);
+  color: #fff;
+}
+
+/* glow premium */
+#totaldepessoas::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  background:
+    radial-gradient(700px circle at 18% 25%, rgba(255,255,255,.18), transparent 60%),
+    radial-gradient(900px circle at 85% 20%, rgba(0,0,0,.18), transparent 62%);
+  opacity: .9;
+}
+
+#totaldepessoas .tdp-grid{
+  position: relative;
+  display: grid;
+  gap: 34px;
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 980px){
+  #totaldepessoas .tdp-grid{
+    grid-template-columns: 1.05fr .95fr;
+    gap: 48px;
+  }
+}
+
+/* LEFT */
+#totaldepessoas .tdp-left{
+  position: relative;
+  z-index: 1;
+}
+
+#totaldepessoas .tdp-eyebrow{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .95;
+}
+
+#totaldepessoas .tdp-eyebrow::before{
+  content:"";
+  width: 28px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.75);
+  box-shadow: -2px 2px 0 rgba(0,0,0,.14);
+}
+
+#totaldepessoas .tdp-title{
+  margin-top: 12px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  font-size: clamp(28px, 3.2vw, 44px);
+
+  /* 3D leve (sombra para esquerda + base) */
+  text-shadow:
+    -2px 2px 0 rgba(0,0,0,.16),
+    -10px 14px 28px rgba(0,0,0,.22);
+}
+
+#totaldepessoas .tdp-title-em{
+  position: relative;
+  display: inline-block;
+}
+
+#totaldepessoas .tdp-title-em::after{
+  content:"";
+  position:absolute;
+  left: -2px;
+  right: -2px;
+  bottom: .08em;
+  height: .42em;
+  border-radius: 12px;
+  background: rgba(255,255,255,.18);
+  z-index: -1;
+}
+
+/* KPIs */
+#totaldepessoas .tdp-kpis{
+  margin-top: 22px;
+  display: grid;
+  gap: 14px;
+}
+
+@media (min-width: 720px){
+  #totaldepessoas .tdp-kpis{
+    gap: 16px;
+  }
+}
+
+#totaldepessoas .tdp-kpi{
+  position: relative;
+  isolation: isolate;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 16px 14px;
+}
+
+/* “base”/3D do card (sombra projetada pra esquerda + chão) */
+#totaldepessoas .tdp-kpi::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 18px;
+  transform: translate(-10px, 12px);
+  background: rgba(0,0,0,.18);
+  z-index: -1;
+  filter: blur(.2px);
+}
+
+#totaldepessoas .tdp-kpi::after{
+  content:"";
+  position:absolute;
+  left: 12%;
+  right: 12%;
+  bottom: -14px;
+  height: 18px;
+  background: radial-gradient(closest-side, rgba(0,0,0,.25), transparent 70%);
+  filter: blur(10px);
+  opacity: .55;
+  z-index: -2;
+}
+
+#totaldepessoas .tdp-kpi-top{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+#totaldepessoas .tdp-kpi-value{
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+#totaldepessoas .tdp-kpi-number{
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  font-size: clamp(30px, 2.8vw, 46px);
+  line-height: 1;
+
+  /* 3D no número (mais evidente) */
+  text-shadow:
+    -2px 2px 0 rgba(0,0,0,.18),
+    -12px 16px 30px rgba(0,0,0,.25);
+}
+
+#totaldepessoas .tdp-kpi-unit{
+  font-weight: 900;
+  opacity: .92;
+  font-size: 14px;
+  letter-spacing: .02em;
+  text-shadow: -1px 1px 0 rgba(0,0,0,.14);
+}
+
+#totaldepessoas .tdp-kpi-desc{
+  margin: 10px 0 0;
+  font-weight: 650;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(255,255,255,.92);
+  text-shadow: -1px 1px 0 rgba(0,0,0,.10);
+  max-width: 70ch;
+}
+
+#totaldepessoas .tdp-kpi-desc b{
+  font-weight: 900;
+  color: #fff;
+}
+
+/* RIGHT (imagem) */
+#totaldepessoas .tdp-right{
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+#totaldepessoas .tdp-figure{
+  position: relative;
+  width: min(520px, 92vw);
+  height: 420px;
+  border-radius: 28px;
+}
+
+/* glow atrás da imagem */
+#totaldepessoas .tdp-figure::before{
+  content:"";
+  position:absolute;
+  inset: -10%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,.22), transparent 62%);
+  filter: blur(10px);
+  opacity: .9;
+}
+
+/* sombra “chão” da imagem */
+#totaldepessoas .tdp-figure::after{
+  content:"";
+  position:absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -10px;
+  height: 18px;
+  background: radial-gradient(closest-side, rgba(0,0,0,.28), transparent 72%);
+  filter: blur(12px);
+  opacity: .65;
+}
+
+#totaldepessoas .tdp-figure-img{
+  object-fit: contain;
+  padding: 16px;
+  filter: drop-shadow(-14px 18px 26px rgba(0,0,0,.28));
+}
+
+/* responsivo */
+@media (max-width: 980px){
+  #totaldepessoas .tdp-figure{
+    height: 360px;
+  }
+}
+@media (max-width: 560px){
+  #totaldepessoas .tdp-figure{
+    height: 320px;
+  }
+  #totaldepessoas .tdp-kpi{
+    padding: 14px 14px 12px;
+  }
+}
+
+
+/* ===========================
+PATCH: KPIs BRANCOS + TEXTO AZUL
+(colar abaixo do CSS da seção)
+=========================== */
+
+#totaldepessoas .tdp-kpi{
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* base/sombra mais “limpa” no branco */
+#totaldepessoas .tdp-kpi::before{
+  background: rgba(255, 255, 255, 0.14);
+}
+
+#totaldepessoas .tdp-kpi::after{
+  background: radial-gradient(closest-side, rgba(0,0,0,.18), transparent 70%);
+  opacity: .45;
+}
+
+/* número e unidade em azul */
+#totaldepessoas .tdp-kpi-number,
+#totaldepessoas .tdp-kpi-unit{
+  color: var(--brand-3);
+  text-shadow:
+    -2px 2px 0 rgba(0,0,0,.08),
+    -12px 16px 30px rgba(0,0,0,.12);
+}
+
+/* descrição em azul escuro (pra leitura boa no branco) */
+#totaldepessoas .tdp-kpi-desc{
+  color: rgba(8, 114, 180, .95); /* mesma vibe do brand-3 */
+  text-shadow: none;
+}
+
+#totaldepessoas .tdp-kpi-desc b{
+  color: var(--brand-3);
+}
+
+/* =========================================
+PATCH — Total de Pessoas (imagem com ancoragem)
+- drop-shadow no PNG
+- halo (glow) atrás
+- sombra "chão" bem visível
+- placa/shape sutil atrás (opcional e já incluída)
+Cole no FINAL do globals.css
+========================================= */
+
+#totaldepessoas .tdp-figure{
+  overflow: visible; /* deixa as sombras aparecerem */
+  transform: translateY(8px); /* desce levemente pra alinhar com os cards */
+}
+
+/* halo atrás (mais “posicionado” e com cara de estúdio) */
+#totaldepessoas .tdp-figure::before{
+  inset: auto;
+  width: 520px;
+  height: 520px;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,.26), transparent 62%);
+  filter: blur(8px);
+  opacity: .95;
+}
+
+/* sombra “chão” mais forte e mais larga */
+#totaldepessoas .tdp-figure::after{
+  left: 18%;
+  right: 18%;
+  bottom: 22px;
+  height: 54px;
+  background: radial-gradient(closest-side, rgba(0,0,0,.30), transparent 72%);
+  filter: blur(12px);
+  opacity: .75;
+}
+
+/* placa/shape sutil atrás do casal (dá contexto e não “sticker”) */
+#totaldepessoas .tdp-figure .tdp-backplate{
+  position: absolute;
+  inset: auto;
+  width: 520px;
+  height: 340px;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  border-radius: 28px;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow: 0 24px 60px rgba(0,0,0,.10);
+  backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* imagem recortada com sombra real (respeita o recorte PNG) */
+#totaldepessoas .tdp-figure-img{
+  padding: 0; /* tira padding pra parecer mais “real” */
+  transform: translateY(10px); /* encosta no chão */
+  filter:
+    drop-shadow(-18px 22px 30px rgba(0,0,0,.30))
+    drop-shadow(-6px 10px 16px rgba(0,0,0,.18));
+}
+
+/* garante que o PNG fique acima do backplate */
+#totaldepessoas .tdp-figure > span,
+#totaldepessoas .tdp-figure img{
+  position: relative;
+  z-index: 2;
+}
+
+/* responsivo */
+@media (max-width: 980px){
+  #totaldepessoas .tdp-figure::before{
+    width: 460px;
+    height: 460px;
+    top: 48%;
+  }
+  #totaldepessoas .tdp-figure .tdp-backplate{
+    width: 92vw;
+    height: 320px;
+  }
+}
+
+
+/* =========================================
+   COMENTÁRIOS / DEPOIMENTOS — padrão QuiteJá
+   Seção: <section id="comentarios" ...>
+   Regras do PDF: fundo branco, cards sólidos, rosa com sombra leve,
+   sombra projetada pra esquerda + base (efeito 3D), foto no card.
+=/* =========================================
+   COMENTÁRIOS / DEPOIMENTOS — padrão QuiteJá
+========================================= */
+
+#comentarios{
+  position: relative;
+  background: #fff;
+}
+
+#comentarios .comentarios-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: rgba(11,11,15,.75);
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+#comentarios .comentarios-pill-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 6px 16px rgba(189,27,93,.35);
+}
+
+#comentarios .comentarios-title{
+  margin-top: 14px;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-size: clamp(28px, 3.2vw, 44px);
+  color: var(--fg);
+}
+#comentarios .comentarios-title-3d{
+  color: var(--brand);
+  /* “letras rosa com sombra cinza clara” (efeito 3D) */
+  text-shadow:
+    -2px 2px 0 rgba(0,0,0,.12),
+    -6px 6px 0 rgba(0,0,0,.06);
+}
+#comentarios .comentarios-subtitle{
+  margin-top: 10px;
+  font-weight: 600;
+  color: rgba(11,11,15,.62);
+}
+
+/* =========================================
+   NOVO: Provas sociais (chips)
+========================================= */
+#comentarios .comentarios-proofs{
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+#comentarios .comentarios-proof{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.06);
+}
+#comentarios .comentarios-proof-value{
+  font-weight: 900;
+  color: var(--brand);
+  text-shadow: -1px 1px 0 rgba(0,0,0,.10);
+  font-size: 12px;
+}
+#comentarios .comentarios-proof-label{
+  font-weight: 800;
+  color: rgba(11,11,15,.62);
+  font-size: 12px;
+}
+
+/* =========================================
+   REMOVIDO: controls centrais
+   (agora são setas laterais no wrapper)
+========================================= */
+/*
+#comentarios .comentarios-controls{ ... }
+#comentarios .comentarios-btn{ ... }
+*/
+
+/* =========================================
+   NOVO: Wrapper do carrossel (setas laterais + fade)
+========================================= */
+#comentarios .comentarios-carousel{
+  position: relative;
+  margin-top: 18px;
+}
+
+/* Track (mantém scroll funcionando, mas sem barra) */
+#comentarios .comentarios-track{
+  margin-top: 0;               /* antes era 18px, agora o wrapper controla */
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 14px 44px 8px;      /* espaço interno pras setas laterais */
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Remove scrollbar (todos browsers principais) */
+#comentarios .no-scrollbar{
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge antigo */
+}
+#comentarios .no-scrollbar::-webkit-scrollbar{
+  display: none;                /* Chrome/Safari */
+}
+
+/* Setas laterais */
+#comentarios .comentarios-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.12);
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(0,0,0,.10);
+  font-size: 22px;
+  font-weight: 900;
+  color: rgba(11,11,15,.70);
+  z-index: 5;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+#comentarios .comentarios-nav:hover{
+  transform: translateY(-50%) translateY(-1px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.14);
+}
+#comentarios .comentarios-nav-left{ left: 0; }
+#comentarios .comentarios-nav-right{ right: 0; }
+
+/* Fades laterais (indicador premium de continuidade) */
+#comentarios .comentarios-fade{
+  position:absolute;
+  top: 0;
+  bottom: 0;
+  width: 46px;
+  z-index: 4;
+  pointer-events: none;
+}
+#comentarios .comentarios-fade-left{
+  left: 0;
+  background: linear-gradient(to right, #fff, rgba(255,255,255,0));
+}
+#comentarios .comentarios-fade-right{
+  right: 0;
+  background: linear-gradient(to left, #fff, rgba(255,255,255,0));
+}
+
+/* card sólido (nada transparente) + 3D (esquerda + base) */
+#comentarios .comentarios-card{
+  position: relative;
+  flex: 0 0 auto;
+  width: min(360px, 86vw);
+  background: #fff;
+  border: 1px solid rgba(11,11,15,.10);
+  border-radius: 18px;
+  padding: 16px 16px 14px;
+  scroll-snap-align: start;
+
+  /* 3D: sombra pra esquerda + sombra “chão” */
+  box-shadow:
+    -10px 10px 0 rgba(0,0,0,.06),
+    0 18px 40px rgba(0,0,0,.10);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+#comentarios .comentarios-card:hover{
+  transform: translateY(-2px);
+  box-shadow:
+    -12px 12px 0 rgba(0,0,0,.07),
+    0 26px 60px rgba(0,0,0,.14);
+}
+
+/* topo: estrelas (rosa) + nota */
+#comentarios .comentarios-stars{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#comentarios .comentarios-stars-row{
+  color: var(--brand);
+  letter-spacing: 2px;
+  text-shadow: -1px 1px 0 rgba(0,0,0,.10);
+}
+#comentarios .comentarios-score{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(11,11,15,.55);
+}
+
+/* info (parte superior do card) */
+#comentarios .comentarios-head{
+  display:flex;
+  align-items:center;
+  gap: 12px;
+}
+#comentarios .comentarios-avatar{
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(11,11,15,.10);
+  box-shadow: 0 10px 22px rgba(0,0,0,.10);
+  flex: 0 0 auto;
+}
+#comentarios .comentarios-avatar img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+}
+
+#comentarios .comentarios-person{
+  min-width: 0;
+}
+#comentarios .comentarios-name{
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--fg);
+  line-height: 1.1;
+}
+#comentarios .comentarios-role{
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(11,11,15,.60);
+  margin-top: 2px;
+}
+
+#comentarios .comentarios-verified{
+  margin-left:auto;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  color: rgba(11,11,15,.65);
+  box-shadow: 0 10px 22px rgba(0,0,0,.06);
+}
+
+/* divider */
+#comentarios .comentarios-divider{
+  height: 1px;
+  width: 100%;
+  background: rgba(11,11,15,.10);
+  margin: 12px 0 10px;
+}
+
+/* quote embaixo */
+#comentarios .comentarios-quote{
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(11,11,15,.66);
+  font-weight: 650;
+}
+
+/* detalhes “cartoon/3D” decorativos (sólidos) */
+#comentarios .comentarios-deco{
+  position:absolute;
+  pointer-events:none;
+  opacity: .95;
+}
+#comentarios .comentarios-deco-a{
+  right: 14px;
+  top: 14px;
+  width: 46px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.12);
+  border: 2px solid rgba(189,27,93,.22);
+  transform: rotate(-8deg);
+}
+#comentarios .comentarios-deco-b{
+  left: 14px;
+  bottom: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.18);
+  border: 2px solid rgba(189,27,93,.26);
+  box-shadow: -6px 6px 0 rgba(0,0,0,.06);
+}
+
+/* desktop: cards mais “padrão mercado” (3 por tela visualmente) */
+@media (min-width: 900px){
+  #comentarios .comentarios-card{
+    width: 360px;
+  }
+}
+
+/* mobile: dá um respiro melhor sem “comer” card */
+@media (max-width: 640px){
+  #comentarios .comentarios-track{
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+/* rodapé */
+#comentarios .comentarios-foot{
+  margin-top: 14px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(11,11,15,.50);
+}
+
+@media (max-width: 640px){
+  #comentarios .comentarios-track{
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+@media (max-width: 640px){
+  #comentarios .comentarios-nav{ display: none; }
+}
+
+/* COMENTÁRIOS — padding lateral no mobile (pra não encostar nas bordas) */
+@media (max-width: 960px){
+  #comentarios .container.section{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
+}
+
+
+
+
+/* =========================
+   PRECISA DE AJUDA (FAQ)
+   ========================= */
+
+.ajuda{
+  position: relative;
+  overflow: hidden;
+  background: #fff;           /* antes: var(--brand) */
+  color: var(--fg);           /* antes: #fff */
+}
+
+.ajuda-inner{
+  padding: 88px 0;
+}
+
+.ajuda-grid{
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 42px;
+  align-items: start;
+}
+
+@media (max-width: 960px){
+  .ajuda-inner{ padding: 72px 0; }
+  .ajuda-grid{ grid-template-columns: 1fr; gap: 22px; }
+}
+
+.ajuda-kicker{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  padding: 10px 14px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: rgba(255,255,255,.85);
+  backdrop-filter: blur(8px);
+  color: rgba(11,11,15,.78);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.ajuda-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--brand);   /* antes: branco */
+  box-shadow: 0 8px 18px rgba(189,27,93,.25);
+}
+
+.ajuda-title{
+  margin-top: 16px;
+  font-size: clamp(28px, 3.2vw, 40px);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.ajuda-subtitle{
+  margin-top: 12px;
+  max-width: 52ch;
+  color: rgba(11,11,15,.62);  /* antes: branco translúcido */
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Accordion */
+.ajuda-acc{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: auto;
+  margin-top: 10px;
+
+}
+
+/* Card igual ao comentarios-card */
+.ajuda-item{
+  background: #fff;
+  border: 1px solid rgba(11,11,15,.10);
+  border-radius: 18px;
+  overflow: hidden;
+  scroll-snap-align: start;
+
+  /* 3D: sombra pra esquerda + sombra “ambiente” (igual comentários) */
+  box-shadow:
+    -10px 10px 0 rgba(0,0,0,.06),   /* <- essa é a “parte cinza clara” */
+    0 18px 40px rgba(0,0,0,.10);
+
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.ajuda-item:hover{
+  transform: translateY(-2px);
+  box-shadow:
+    -12px 12px 0 rgba(0,0,0,.07),
+    0 26px 60px rgba(0,0,0,.14);
+}
+/* botão */
+.ajuda-button{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 18px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  color: rgba(11,11,15,.90);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.ajuda-button:focus-visible{
+  outline: 3px solid rgba(189,27,93,.35);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+/* seta (lucide) */
+.ajuda-button svg{
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  color: rgba(11,11,15,.55);
+  transition: transform .18s ease, color .18s ease;
+}
+
+/* painel */
+.ajuda-panel{
+  padding: 14px 18px 18px;
+  border-top: 1px solid rgba(11,11,15,.10);
+  color: rgba(11,11,15,.72);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+
+/* Estado aberto: borda rosa + base 3D rosa */
+.ajuda-item[data-open="true"],
+.ajuda-item[data-state="open"],
+.ajuda-item:has(.ajuda-button[aria-expanded="true"]){
+  border-color: rgba(189,27,93,.85);
+  box-shadow:
+    -10px 10px 0 rgba(189,27,93,.22),  /* <- base vira rosa */
+    0 22px 60px rgba(189,27,93,.18);   /* ambiente levemente rosado */
+}
+
+.ajuda-item[data-open="true"] .ajuda-button,
+.ajuda-item[data-state="open"] .ajuda-button,
+.ajuda-item:has(.ajuda-button[aria-expanded="true"]) .ajuda-button{
+  color: var(--brand);
+}
+
+.ajuda-item[data-open="true"] .ajuda-button svg,
+.ajuda-item[data-state="open"] .ajuda-button svg,
+.ajuda-item:has(.ajuda-button[aria-expanded="true"]) .ajuda-button svg{
+  color: var(--brand);
+  transform: rotate(180deg);
+}
+
+/* ===== Carrossel FAQ (4 em 4) ===== */
+.ajuda-carouselWrap{
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ajuda-carouselTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.ajuda-nav{
+  display: inline-flex;
+  gap: 10px;
+}
+
+.ajuda-navBtn{
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.12);
+  background: #fff;
+  color: rgba(11,11,15,.70);
+  font-size: 22px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 14px 34px rgba(0,0,0,.10);
+  backdrop-filter: blur(8px);
+  transition: transform .15s ease, background .15s ease, opacity .15s ease;
+}
+
+.ajuda-navBtn:hover{  transform: translateY(-1px);
+  box-shadow: 0 20px 50px rgba(0,0,0,.14); }
+.ajuda-navBtn:disabled{   opacity: .45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 14px 34px rgba(0,0,0,.08);}
+
+.ajuda-dots{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ajuda-dotItem{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(11,11,15,.18);
+  transition: transform .15s ease, background .15s ease;
+}
+
+.ajuda-dotItem.is-active{
+   background: var(--brand);
+  transform: scale(1.15);
+}
+
+/* trilho */
+.ajuda-carousel{
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+  background-color: #0b0b0f00 !important;
+  height: auto !important;
+  /* escondendo scrollbar “feia” */
+  scrollbar-width: none;
+}
+.ajuda-carousel::-webkit-scrollbar{ display: none; }
+
+/* slide ocupa 100% do espaço da coluna direita */
+.ajuda-slide{
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+ padding: 10px;
+}
+
+/* === REMOVE o “container cinza” atrás do accordion === */
+/* (esse cinza aparece entre itens e na lateral direita) */
+
+.ajuda-carouselBox,
+.ajuda-carousel,
+.ajuda-slide,
+.ajuda-acc{
+  background: #fff !important;     /* garante branco por trás */
+}
+
+/* se o cinza vier do Accordion do componente (wrapper interno) */
+.ajuda-slide > * ,
+.ajuda-acc > *{
+  background: transparent !important;
+}
+
+/* caso o wrapper esteja com padding/borda/sombra criando “placa” */
+.ajuda-slide,
+.ajuda-acc{
+  padding: 0 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* cobre qualquer div interna do accordion que venha com bg */
+.ajuda-acc [data-accordion],
+.ajuda-acc [data-scope],
+.ajuda-acc [data-part]{
+  background: transparent !important;
+}
+
+/* === Remove o fundo cinza do TRACK/wrappers (o que aparece entre os itens e na lateral) === */
+.ajuda-carouselBox,
+.ajuda-carousel,
+.ajuda-slide,
+.ajuda-acc{
+  background: transparent !important; /* deixa o branco da seção aparecer */
+}
+
+/* o TRACK especificamente pode ficar branco também (tanto faz, pq a seção é branca) */
+.ajuda-carousel{
+  background: #fff !important;
+}
+
+/* importante: alguns componentes colocam background num wrapper interno */
+.ajuda-acc *{
+  background: transparent;
+}
+
+/* se o cinza vier de algum wrapper “invisível” com border-radius/sombra */
+.ajuda-slide,
+.ajuda-acc{
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ✅ AJUDA (FAQ) — FIX: não zerar padding lateral do .container */
+.ajuda-inner{
+  /* era: padding: 88px 0;  -> isso removia o padding-left/right do .container */
+  padding-top: 88px;
+  padding-bottom: 88px;
+}
+
+@media (max-width: 960px){
+  .ajuda-inner{
+    /* era: padding: 72px 0; */
+    padding-top: 72px;
+    padding-bottom: 72px;
+  }
+
+  .ajuda-grid{
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}
+/* AJUDA — padding lateral no mobile (pra não encostar nas bordas) */
+@media (max-width: 960px){
+  #ajuda .ajuda-inner{
+    padding-left: clamp(16px, 4vw, 22px);
+    padding-right: clamp(16px, 4vw, 22px);
+  }
+}
+
+
+
+
+
+/* =========================================
+AVALIAÇÃO — padrão QuiteJá (fundo rosa + card branco 3D)
+Seção: <section id="avaliacao" ...>
+========================================= */
+/* =========================================
+AVALIAÇÃO — padrão QuiteJá (seção branca + card branco 3D com base cinza à esquerda)
+Seção: <section id="avaliacao" ...>
+========================================= */
+#avaliacao{
+  position: relative;
+  overflow: hidden;
+  background: var(--brand); /* ✅ seção branca */
+}
+
+/* glow/iluminação sutil (neutro, sem vidro) */
+#avaliacao::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  pointer-events:none;
+  background:
+    radial-gradient(850px circle at 20% 25%, rgba(189,27,93,.10), transparent 62%),
+    radial-gradient(900px circle at 85% 10%, rgba(0,0,0,.04), transparent 65%);
+  opacity: 1;
+}
+
+/* layout */
+#avaliacao .ava-shell{
+  position: relative;
+  display: grid;
+  gap: 26px;
+  align-items: center;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px){
+  #avaliacao .ava-shell{
+    grid-template-columns: 1.05fr .95fr; /* foto maior / card menor */
+    gap: 44px;
+  }
+}
+
+/* =========================
+   FOTO (slot)
+========================= */
+#avaliacao .ava-photo{
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: end center;
+}
+
+/* espaço pra foto (não é card) */
+#avaliacao .ava-photoSlot{
+  position: relative;
+  width: min(540px, 92vw);
+  height: 520px;
+  overflow: visible;
+}
+
+/* glow atrás da foto (agora levemente rosado, pq fundo é branco) */
+/* glow atrás do corpo (mais evidente) */
+#avaliacao .ava-photoSlot::before{
+  content:"";
+  position:absolute;
+  width: 560px;
+  height: 560px;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.514), transparent 64%);
+  filter: blur(10px);
+  opacity: 1;
+  pointer-events:none;
+  z-index: 0;
+}
+
+/* sombra “chão” (mais realista e encaixada no pé) */
+#avaliacao .ava-photoSlot::after{
+  content:"";
+  position:absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 6px; /* 👈 encosta mais na base */
+  height: 78px;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.562), transparent 72%);
+  filter: blur(14px);
+  opacity: .62;
+  pointer-events:none;
+  z-index: 0;
+}
+
+
+/* imagem (quando ativar o PHOTO_SRC) */
+#avaliacao .ava-photoImg{
+  object-fit: contain;
+  position: relative;
+  z-index: 2;
+  filter:
+    drop-shadow(-18px 22px 30px rgba(0,0,0,.26))
+    drop-shadow(-6px 10px 16px rgba(0,0,0,.14));
+  transform: translateY(10px);
+}
+
+/* placeholder (fundo branco pede placeholder cinza) */
+#avaliacao .ava-photoPlaceholder{
+  position:absolute;
+  inset: 0;
+  border-radius: 28px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  background: rgba(11,11,15,.02);
+  border: 1px dashed rgba(11,11,15,.18);
+}
+
+#avaliacao .ava-photoHint{
+  text-align: center;
+  max-width: 360px;
+  padding: 18px 18px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(11,11,15,.10);
+  box-shadow: 0 22px 50px rgba(0,0,0,.10);
+  color: rgba(11,11,15,.82);
+}
+#avaliacao .ava-photoHintTitle{
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+#avaliacao .ava-photoHintSub{
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: .85;
+}
+
+/* =========================
+   CARD (branco sólido + 3D base cinza à esquerda)
+   ✅ IMPORTANTÍSSIMO: 3D fica no WRAPPER
+========================= */
+#avaliacao .ava-cardWrap{
+  position: relative;
+  z-index: 2;
+}
+
+/* base 3D atrás do card */
+#avaliacao .ava-cardWrap::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 22px;
+  transform: translate(-18px, 10px); /* ✅ cinza puxando pra esquerda */
+  background: rgba(0,0,0,.18);
+  z-index: 0;
+}
+
+/* card branco em cima da base */
+#avaliacao .ava-card{
+  position: relative;
+  z-index: 1;
+  background: #fff !important;        /* ✅ sólido */
+  background-image: none !important;
+  opacity: 1 !important;
+
+  border-radius: 22px;
+  padding: 24px 22px 20px;
+  border: 1px solid rgba(11,11,15,.08);
+  box-shadow: 0 26px 60px rgba(0,0,0,.12);
+
+  /* mata qualquer glass global */
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+
+  color: rgba(11,11,15,.86);
+}
+
+/* se ainda existir algum ::before antigo no card, desliga */
+#avaliacao .ava-card::before{
+  content: none !important;
+}
+
+/* borda interna premium */
+#avaliacao .ava-card::after{
+  content:"";
+  position:absolute;
+  inset: 0;
+  border-radius: 22px;
+  pointer-events:none;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.70);
+}
+
+#avaliacao .ava-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .02em;
+  color: rgba(11,11,15,.70);
+  box-shadow: 0 10px 24px rgba(0,0,0,.06);
+}
+
+#avaliacao .ava-pill-dot{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--brand);
+  box-shadow: 0 6px 16px rgba(189,27,93,.25);
+}
+
+#avaliacao .ava-title{
+  margin: 14px 0 10px;
+  font-weight: 950;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  font-size: clamp(28px, 3.2vw, 40px);
+  color: rgba(11,11,15,.86);
+}
+
+#avaliacao .ava-strong{
+  color: rgba(11,11,15,.92);
+}
+
+#avaliacao .ava-underline{
+  background-image: linear-gradient(to bottom, transparent 65%, rgba(189,27,93,.20) 65%);
+  background-size: 100% 100%;
+  border-radius: 10px;
+  padding: 0 .12em;
+}
+
+#avaliacao .ava-text{
+  margin: 0;
+  font-weight: 650;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(11,11,15,.64);
+  max-width: 62ch;
+}
+
+/* estrelas + score */
+#avaliacao .ava-rating{
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+#avaliacao .ava-stars{
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+#avaliacao .ava-star{
+  width: 16px;
+  height: 16px;
+  color: var(--brand);
+  filter: drop-shadow(-1px 1px 0 rgba(0,0,0,.10));
+}
+
+#avaliacao .ava-score{
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(11,11,15,.55);
+}
+
+#avaliacao .ava-score b{
+  color: rgba(11,11,15,.78);
+}
+
+/* badges */
+#avaliacao .ava-badges{
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#avaliacao .ava-badge{
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.08);
+  border: 1px solid rgba(189,27,93,.16);
+  color: rgba(11,11,15,.66);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+/* detalhes cartoon/3D sólidos */
+#avaliacao .ava-deco{
+  position:absolute;
+  pointer-events:none;
+  opacity: .95;
+}
+
+#avaliacao .ava-deco-a{
+  right: 16px;
+  top: 16px;
+  width: 56px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.12);
+  border: 2px solid rgba(189,27,93,.22);
+  transform: rotate(-10deg);
+}
+
+#avaliacao .ava-deco-b{
+  left: 16px;
+  bottom: 16px;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(189,27,93,.18);
+  border: 2px solid rgba(189,27,93,.26);
+  box-shadow: -6px 6px 0 rgba(0,0,0,.06);
+}
+
+/* responsivo */
+@media (max-width: 1024px){
+  #avaliacao .ava-photoSlot{ height: 420px; }
+}
+@media (max-width: 560px){
+  #avaliacao .ava-card{ padding: 20px 18px 18px; }
+}
+
+/* ✅ deixa a section “sem chão sobrando” (se sua .section tem padding-bottom grande) */
+#avaliacao{
+  padding-bottom: 0 !important;
+}
+
+/* ✅ aumenta a área da foto (pra ela poder crescer) */
+#avaliacao .ava-photoSlot{
+  height: 620px; /* era 520 */
+}
+
+/* ✅ wrapper da imagem manual (fica absoluto e “gruda” no fundo) */
+#avaliacao .ava-photoFigure{
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* ✅ a mulher em si: maior e encostada na base */
+#avaliacao .ava-photoManual{
+  position: absolute;
+  left: 50%;
+  bottom: 128px;            /* 👈 gruda no chão (ajusta -28 / -48 se quiser) */
+  transform: translateX(-50%);
+  height: 138%;             /* 👈 aumenta a mulher */
+  width: auto;
+  max-width: none;
+  display: block;
+
+  /* peso / recorte premium */
+  filter:
+    drop-shadow(-22px 28px 34px rgba(0,0,0,.30))
+    drop-shadow(-8px 12px 18px rgba(0,0,0,.18));
+}
+
+@media (max-width: 1024px){
+  #avaliacao .ava-photoSlot{ height: 500px; }
+  #avaliacao .ava-photoManual{ height: 112%; bottom: -28px; }
+}
+
+/* ✅ Mais espaço no bottom do card (principal pedido) */
+#avaliacao .ava-card{
+  padding: 24px 22px 34px;
+   /* aumentei o bottom */
+}
+@media (max-width: 560px){
+  #avaliacao .ava-card{
+    padding: 20px 18px 30px; /* mobile */
+    margin-bottom: 20px !important;
+    margin-left: 5px;
+  }
+}
+
+/* ✅ picture ocupa o slot inteiro */
+#avaliacao .ava-photoPicture{
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+/* ✅ Mobile: imagem inteira (sem cortar) */
+@media (max-width: 768px){
+  #avaliacao .ava-photoSlot{
+    height: min(78vh, 640px); /* garante espaço pra caber inteira */
+  }
+
+  #avaliacao .ava-photoManual{      /* mantém “grudada” na base */
+    height: 90%;         /* inteira */
+    width: auto;
+    object-fit: contain;  /* não corta */
+    max-height: none;
+    margin-left: 10px;
+  }
+
+  /* sombra “chão” alinhada no mobile */
+  #avaliacao .ava-photoSlot::after{
+    bottom: 8px;
+    height: 64px;
+    opacity: .55;
+  }
+}
+
+
+/* =========================================
+   FOOTER — padrão QuiteJá (escopado)
+   <footer id="contato" className="qj-footer">
+   Regras: fundo cinza claro, títulos pretos,
+   links/ícones cinza com hover rosa,
+   parceiros em colunas, bottom bar rosa.
+========================================= */
+
+#contato.qj-footer{
+  position: relative;
+  background: linear-gradient(180deg, rgba(245,245,248,1), rgba(250,250,252,1));
+  border-top: 1px solid rgba(11,11,15,.08);
+}
+
+/* padding geral do miolo */
+#contato .qj-footer-wrap{
+  padding: 64px 0 42px;
+}
+
+/* grid principal */
+#contato .qj-footer-grid{
+  display: grid;
+  gap: 34px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 980px){
+  #contato .qj-footer-grid{
+    grid-template-columns: 1.05fr 1.95fr;
+    gap: 48px;
+    align-items: start;
+  }
+}
+
+/* LEFT */
+#contato .qj-footer-brand{
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+#contato .qj-footer-logoMark{
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(189,27,93,.10);
+  border: 1px solid rgba(189,27,93,.18);
+  box-shadow: 0 16px 34px rgba(0,0,0,.06);
+}
+
+#contato .qj-footer-logoMark span{
+  font-weight: 900;
+  color: var(--brand);
+  letter-spacing: -0.02em;
+}
+
+#contato .qj-footer-logoImg{
+  border-radius: 14px;
+  box-shadow: 0 16px 34px rgba(0,0,0,.06);
+}
+
+#contato .qj-footer-brandName{
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  color: rgba(11,11,15,.90);
+  line-height: 1.1;
+}
+
+#contato .qj-footer-brandDesc{
+  margin-top: 6px;
+  color: rgba(11,11,15,.62);
+  font-weight: 650;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+/* infos */
+#contato .qj-footer-meta{
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+  color: rgba(11,11,15,.62);
+  font-weight: 650;
+  font-size: 14px;
+}
+
+#contato .qj-footer-metaRow{
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+#contato .qj-footer-ico{
+  opacity: .9;
+}
+
+/* social */
+#contato .qj-footer-social{
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#contato .qj-footer-socialBtn{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: rgba(11,11,15,.62);
+  border: 1px solid rgba(11,11,15,.10);
+  background: rgba(255,255,255,.70);
+  box-shadow: 0 12px 26px rgba(0,0,0,.06);
+  transition: transform .18s ease, border-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+
+#contato .qj-footer-socialBtn:hover{
+  transform: translateY(-1px);
+  border-color: rgba(189,27,93,.35);
+  color: var(--brand);
+  box-shadow: 0 16px 34px rgba(0,0,0,.08);
+}
+
+/* RIGHT columns */
+#contato .qj-footer-right{
+  display: grid;
+  gap: 22px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 860px){
+  #contato .qj-footer-right{
+    grid-template-columns: 1.2fr .9fr .9fr;
+    gap: 28px;
+  }
+}
+
+/* col */
+#contato .qj-footer-col{
+  min-width: 0;
+}
+
+#contato .qj-footer-title{
+  margin: 0 0 10px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: rgba(11,11,15,.88);
+  font-size: 14px;
+}
+
+#contato .qj-footer-title--mt{
+  margin-top: 18px;
+}
+
+#contato .qj-footer-list{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 9px;
+}
+
+/* parceiros em colunas (evita footer gigante) */
+#contato .qj-footer-list--partners{
+  column-gap: 26px;
+  columns: 2;
+}
+
+@media (min-width: 1180px){
+  #contato .qj-footer-list--partners{
+    columns: 3;
+  }
+}
+
+/* links */
+#contato .qj-footer-link{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(11,11,15,.62);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.25;
+  transition: color .16s ease, transform .16s ease;
+}
+
+#contato .qj-footer-link:hover{
+  color: var(--brand);
+}
+
+#contato .qj-footer-link:focus-visible{
+  outline: 2px solid rgba(189,27,93,.40);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+#contato .qj-footer-linkBtn{
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+}
+
+/* badge */
+#contato .qj-footer-badge{
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (min-width: 860px){
+  #contato .qj-footer-badge{
+    justify-content: flex-end;
+  }
+}
+
+#contato .qj-footer-badgeImg{
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: rgba(255,255,255,.75);
+  box-shadow: 0 18px 40px rgba(0,0,0,.06);
+}
+
+/* bottom bar rosa */
+#contato .qj-footer-bottom{
+  background: var(--brand);
+  color: #fff;
+}
+
+#contato .qj-footer-bottomInner{
+  padding: 14px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 820px){
+  #contato .qj-footer-bottomInner{
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+#contato .qj-footer-copy{
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,.92);
+}
+
+#contato .qj-footer-legal{
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#contato .qj-footer-legalLink{
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255,255,255,.92);
+  transition: opacity .16s ease, transform .16s ease;
+}
+
+#contato .qj-footer-legalLink:hover{
+  opacity: .95;
+  transform: translateY(-1px);
+}
+
+#contato .qj-footer-legalSep{
+  opacity: .7;
+}
+
+/* =========================================
+FOOTER — MOBILE PATCH (mais padding nas laterais)
+Regra do PDF: "apenas para dar um padding para não ficar grudado"
+========================================= */
+@media (max-width: 768px){
+  /* aumenta só o padding lateral do footer no mobile */
+  #contato.qj-footer .container{
+    padding-left: clamp(16px, 5vw, 24px);
+    padding-right: clamp(16px, 5vw, 24px);
+  }
+}
+
+/* =========================
+   HEADER (NOVO) — sempre branco, clean, hover rosa
+   ========================= */
+html{
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 12px);
+}
+
+/* ajuda anchors a não ficarem “por baixo” do header */
+section[id]{
+  scroll-margin-top: calc(var(--header-h) + 12px);
+}
+
+body[data-menu-open="true"]{
+  overflow: hidden;
+}
+
+.site-header{
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
+  z-index: 5000;
+}
+
+.site-header__bar{
+  background: #fff;
+  border-bottom: 1px solid rgba(11,11,15,.08);
+  box-shadow: 0 14px 30px rgba(0,0,0,.08);
+}
+
+.site-header__inner{
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.site-header__spacer{
+  height: var(--header-h);
+}
+
+/* Logo */
+.site-header__logo{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.site-header__mark{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: var(--brand);
+  box-shadow: 0 14px 26px rgba(189,27,93,.22);
+  flex: 0 0 auto;
+}
+
+.site-header__brandWrap{
+  display: grid;
+  line-height: 1.1;
+}
+
+.site-header__brand{
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: rgba(11,11,15,.86);
+}
+
+.site-header__tag{
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(11,11,15,.52);
+}
+
+/* Nav desktop */
+.site-header__nav{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.site-header__link{
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 850;
+  color: rgba(11,11,15,.68);
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.site-header__link:hover{
+  color: var(--brand);
+  background: rgba(11,11,15,.04);
+  transform: translateY(-1px);
+}
+
+.site-header__link.is-active{
+  color: var(--brand);
+  background: rgba(189,27,93,.10);
+}
+
+/* Right */
+.site-header__right{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-header__cta{
+  border: 0;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 950;
+  font-size: 13px;
+  box-shadow: 0 16px 30px rgba(0,0,0,.12);
+  transition: transform .15s ease, filter .15s ease;
+}
+
+.site-header__cta:hover{
+  transform: translateY(-1px);
+  filter: brightness(.98);
+}
+
+.site-header__menuBtn{
+  display: none; /* aparece só no mobile */
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  color: rgba(11,11,15,.78);
+  box-shadow: 0 14px 28px rgba(0,0,0,.10);
+  cursor: pointer;
+}
+
+/* Mobile */
+@media (max-width: 860px){
+  .site-header__nav{ display: none; }
+  .site-header__cta{ display: none; }
+  .site-header__menuBtn{ display: inline-grid; place-items: center; }
+}
+
+/* =========================================================
+   OVERLAY MOBILE — Drawer da direita (tipo Rocketseat)
+   - puxa da lateral direita
+   - ocupa quase toda a tela
+   - sobra faixa com blur clicável para fechar
+   ========================================================= */
+.site-header__mobile{
+  position: fixed;
+  inset: 0;
+  z-index: 6000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .22s ease;
+}
+
+.site-header__mobile[data-open="true"]{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* área que sobra (clicável) + blur */
+.site-header__backdrop{
+  position: absolute;
+  inset: 0;
+  border: 0;
+  cursor: pointer;
+  background: rgba(11,11,15,.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* painel que vem da direita */
+.site-header__panel{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+
+  /* “quase toda a tela”, sobrando um filete com blur */
+  width: min(88vw, 420px);
+
+  background: #fff;
+  border-left: 1px solid rgba(11,11,15,.10);
+
+  /* arredonda só o lado esquerdo (fica com cara de drawer) */
+  border-radius: 22px 0 0 22px;
+
+  /* safe-area (iPhone notch + barra) */
+  padding-top: max(14px, env(safe-area-inset-top));
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  padding-left: 14px;
+  padding-right: 14px;
+
+  box-shadow: -30px 0 90px rgba(0,0,0,.28);
+
+  transform: translate3d(105%, 0, 0);
+  transition: transform .28s cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+
+  /* se o menu crescer, rola dentro do painel */
+  overflow: auto;
+}
+
+.site-header__mobile[data-open="true"] .site-header__panel{
+  transform: translate3d(0, 0, 0);
+}
+
+/* Topo do painel */
+.site-header__panelTop{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(11,11,15,.08);
+}
+
+.site-header__panelTitle{
+  font-weight: 950;
+  letter-spacing: -0.02em;
+  color: rgba(11,11,15,.86);
+}
+
+.site-header__panelClose{
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid rgba(11,11,15,.10);
+  background: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.site-header__mobileLinks{
+  display: grid;
+  gap: 8px;
+  padding: 12px 0 14px;
+}
+
+.site-header__mobileLink{
+  text-align: left;
+  padding: 12px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(11,11,15,.08);
+  background: rgba(11,11,15,.02);
+  font-weight: 900;
+  color: rgba(11,11,15,.74);
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
+}
+
+.site-header__mobileLink:hover{
+  transform: translateY(-1px);
+  color: var(--brand);
+  background: rgba(189,27,93,.08);
+}
+
+.site-header__mobileLink.is-active{
+  color: var(--brand);
+  background: rgba(189,27,93,.10);
+  border-color: rgba(189,27,93,.22);
+}
+
+.site-header__mobileCta{
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--brand);
+  color: #fff;
+  font-weight: 950;
+  box-shadow: 0 16px 30px rgba(0,0,0,.12);
+}
+
+/* acessibilidade */
+@media (prefers-reduced-motion: reduce){
+  .site-header__mobile,
+  .site-header__panel{
+    transition: none !important;
+  }
 }
