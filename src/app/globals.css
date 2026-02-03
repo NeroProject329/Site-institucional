@@ -753,7 +753,295 @@ Cole no FINAL da área do HERO no globals.css
   box-shadow: 0 18px 40px rgba(0,0,0,.20); /* no lugar de qualquer sensação “clara” */
 }
 
+/* =========================
+   HERO — CTA VIVO (gradiente contínuo + 3D)
+   Cole no FINAL do CSS do Hero
+========================= */
 
+/* Corrige o ; que está faltando (isso pode quebrar regras abaixo no mobile) */
+@media (max-width: 768px){
+  .hero-image{
+    margin-top: 60px; /* <- faltava ; no seu CSS */
+  }
+}
+
+/* Override forte só no Hero */
+#inicio .hero-ctaBtn{
+  /* mantém a base branca, mas com relevo 3D */
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.08);
+  isolation: isolate;            /* garante que os blends não vazem */
+  animation: none !important;    /* desliga o "breath" antigo do botão (se estiver ativo) */
+
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.30),     /* sombra principal (profunda) */
+    0 10px 22px rgba(0,0,0,.18),     /* reforço (relevo) */
+    inset 0 1px 0 rgba(255,255,255,.92), /* brilho superior (bevel) */
+    inset 0 -16px 26px rgba(0,0,0,.10);  /* “peso” embaixo (3D) */
+
+  transform: translateZ(0);
+}
+
+
+
+/* Highlight/verniz por cima (deixa premium sem apagar o texto) */
+#inicio .hero-ctaBtn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius: inherit;
+  pointer-events:none;
+  z-index: 1;
+
+  background:
+    radial-gradient(120% 80% at 20% 0%, rgba(255,255,255,.75), transparent 55%),
+    radial-gradient(120% 80% at 85% 110%, rgba(0,0,0,.10), transparent 60%);
+  opacity: .55;
+}
+
+/* Garante que texto e ícone fiquem SEMPRE acima do gradiente */
+#inicio .hero-ctaBtn > *{
+  position: relative;
+  z-index: 2;
+}
+
+/* Hover: sobe um pouco o relevo (continua com o gradiente rodando) */
+#inicio .hero-ctaBtn:hover{
+  box-shadow:
+    0 34px 82px rgba(0,0,0,.34),
+    0 12px 26px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -18px 28px rgba(0,0,0,.10);
+}
+
+/* Active: “pressionado” (efeito 3D real) */
+#inicio .hero-ctaBtn:active{
+  transform: translateY(1px);
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.26),
+    0 6px 14px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -14px 22px rgba(0,0,0,.12);
+}
+
+@keyframes heroCtaGradientFlow{
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Acessibilidade: respeita reduce motion */
+@media (prefers-reduced-motion: reduce){
+  #inicio .hero-ctaBtn::before{ animation: none; }
+}
+
+/* =========================
+   HERO — CTA VIVO (FORÇADO) + 3D (não depende de ::before)
+   Cole no FINAL ABSOLUTO do CSS do Hero
+========================= */
+
+/* (opcional, mas recomendado) garante que o botão seja “camada” própria */
+#inicio .hero-ctaWrap{ position: relative; z-index: 5; }
+
+/* CTA animado – hard override */
+#inicio .hero-ctaBtn{
+  position: relative !important;
+  overflow: hidden !important;
+
+  /* fundo vivo (bem claro, mas VISÍVEL) */
+  background-color: #fff !important;
+  background-image: linear-gradient(
+    120deg,
+    #ffffff 0%,
+    rgba(255, 210, 232, .95) 22%,  /* rosa claro */
+    rgba(210, 238, 255, .95) 52%,  /* azul claro */
+    #ffffff 78%,
+    rgba(255, 210, 232, .95) 100% 
+  ) !important;
+
+  background-size: 320% 320% !important;
+
+  
+  /* 3D / relevo */
+  border: 1px solid rgba(0,0,0,.10) !important;
+  box-shadow:
+    0 28px 70px rgba(0,0,0,.30),
+    0 12px 26px rgba(0,0,0,.18),
+    inset 0 1px 0 rgba(255,255,255,.95),
+    inset 0 -18px 28px rgba(0,0,0,.10) !important;
+
+  /* animações contínuas (bg + halo) */
+  animation:
+    heroCtaBgShift 4.2s ease-in-out infinite,
+    heroCtaHalo 2.8s ease-in-out infinite !important;
+
+  transform: translateZ(0);
+  will-change: background-position, filter;
+}
+
+/* texto/ícone acima de qualquer brilho */
+#inicio .hero-ctaBtn > *{
+  position: relative;
+  z-index: 2;
+}
+
+/* “shine” passando por cima continuamente (deixa premium e chamativo) */
+#inicio .hero-ctaBtn::after{
+  content:"";
+  position: absolute;
+  inset: -60%;
+  z-index: 1;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.55) 45%,
+    rgba(255,255,255,.15) 52%,
+    transparent 100%
+  );
+
+  transform: translateX(-55%) rotate(18deg);
+  animation: heroCtaShine 2.6s ease-in-out infinite;
+  mix-blend-mode: soft-light;
+  opacity: .9;
+}
+
+#inicio .hero-ctaBtn:hover{
+  box-shadow:
+    0 34px 82px rgba(0,0,0,.34),
+    0 14px 30px rgba(0,0,0,.20),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -20px 30px rgba(0,0,0,.10) !important;
+}
+
+#inicio .hero-ctaBtn:active{
+  transform: translateY(1px);
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.26),
+    0 6px 14px rgba(0,0,0,.16),
+    inset 0 1px 0 rgba(255,255,255,.88),
+    inset 0 -14px 22px rgba(0,0,0,.12) !important;
+}
+
+/* keyframes */
+@keyframes heroCtaBgShift{
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes heroCtaShine{
+  0%   { transform: translateX(-60%) rotate(18deg); opacity: .55; }
+  45%  { opacity: .95; }
+  100% { transform: translateX(60%) rotate(18deg); opacity: .55; }
+}
+
+
+/* acessibilidade */
+@media (prefers-reduced-motion: reduce){
+  #inicio .hero-ctaBtn{
+    animation: none !important;
+    background-position: 50% 50% !important;
+    filter: none !important;
+  }
+  #inicio .hero-ctaBtn::after{ animation: none !important; opacity: .25; }
+}
+
+/* =========================
+   HERO — brilho nos textos (nítido)
+========================= */
+/* =========================
+   HERO — TEXTO COM BRILHO (glow real, sem sombra escura)
+   Cole no FINAL ABSOLUTO do CSS do Hero
+========================= */
+
+/* título: glow branco + leve halo rosado (premium) */
+#inicio .hero-titleGlow,
+#inicio [data-hero="title"]{
+  text-shadow:
+    0 0 10px rgba(255,255,255,.38),
+    0 0 22px rgba(255,255,255,.22),
+    0 0 34px rgba(255,255,255,.12),
+    0 0 24px rgba(189,27,93,.18);
+  filter: saturate(1.05);
+}
+
+/* descrição: glow mais suave pra não “lavar” */
+#inicio [data-hero="desc"]{
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.596),
+    0 0 18px rgba(255, 255, 255, 0.445);
+}
+
+/* badge: brilho sutil (sem sombra pesada) */
+#inicio [data-hero="badge"]{
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.40) inset,
+    0 10px 24px rgba(0,0,0,.12);
+}
+
+/* “98%” dourado: reforça glow luminoso, não sombra */
+#inicio .hero-gold{
+  text-shadow:
+    0 0 10px rgba(255, 236, 170, .45),
+    0 0 20px rgba(212,175,55,.28),
+    0 0 34px rgba(212,175,55,.14);
+}
+
+@media (prefers-reduced-motion: no-preference){
+  #inicio [data-hero="title"]{
+    animation: heroTextGlow 2.8s ease-in-out infinite;
+  }
+}
+
+@keyframes heroTextGlow{
+  0%,100%{
+    text-shadow:
+      0 0 10px rgba(255,255,255,.32),
+      0 0 22px rgba(255,255,255,.18),
+      0 0 34px rgba(255,255,255,.10),
+      0 0 22px rgba(189,27,93,.14);
+  }
+  50%{
+    text-shadow:
+      0 0 14px rgba(255,255,255,.46),
+      0 0 30px rgba(255,255,255,.26),
+      0 0 46px rgba(255,255,255,.14),
+      0 0 30px rgba(189,27,93,.22);
+  }
+}
+
+/* =========================
+   HERO — CTA: texto SEMPRE acima do gradiente
+   Cole no FINAL do CSS do Hero
+========================= */
+
+#inicio .hero-ctaBtn{
+  position: relative;
+  isolation: isolate; /* mantém tudo no botão */
+}
+
+/* gradiente animado abaixo do conteúdo */
+#inicio .hero-ctaBtn::before{ z-index: 0; }
+
+/* verniz/highlight também abaixo do texto */
+#inicio .hero-ctaBtn::after{
+  z-index: 1;
+  opacity: .45; /* se ainda “lava” o texto, baixa pra .35 */
+}
+
+/* agora SIM: texto e ícone acima de tudo */
+#inicio .hero-ctaLabel,
+#inicio .hero-ctaIcon{
+  position: relative;
+  z-index: 2;
+}
+
+/* deixa o texto mais “crisp” sem virar sombra escura */
+#inicio .hero-ctaLabel{
+  text-shadow: 0 1px 0 rgba(255,255,255,.65);
+}
 
 
 
@@ -1452,7 +1740,7 @@ Cole no final do globals.css
 
 #oquefazemos .qjf-cardTitle{
   margin: 14px 0 8px;
-  color: var(--qjf-text);
+  color: var(--brand);
   font-weight: 900;
   letter-spacing: -0.02em;
   font-size: 16px;

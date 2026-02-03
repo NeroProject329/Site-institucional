@@ -150,10 +150,10 @@ export default function Header() {
             aria-label="Ir para Home"
           >
             <span className="site-header__mark" aria-hidden="true">
-              C
+              Phb
             </span>
             <span className="site-header__brandWrap">
-              <span className="site-header__brand">Consultoria &amp; Assessoria</span>
+              <span className="site-header__brand">Phb Logistics - Logistica e Servicos LTDA</span>
               <span className="site-header__tag">Mega Feirão 2026</span>
             </span>
           </Link>

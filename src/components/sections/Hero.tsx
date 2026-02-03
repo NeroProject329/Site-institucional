@@ -188,18 +188,22 @@ export default function Hero() {
 
               {/* CTA */}
             <div data-hero="cta" className="hero-ctaWrap">
-              <button
-                 type="button"
+            <button
+  type="button"
   onClick={() => open(msg)}
   disabled={loading}
   aria-busy={loading}
-  className="hero-ctaBtn group relative inline-flex items-center gap-3 rounded-2xl bg-white px-7 py-4 text-base md:text-lg font-bold text-[var(--brand)] shadow-[0_18px_40px_rgba(0,0,0,.25)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 overflow-hidden"
+  className="hero-ctaBtn group relative inline-flex items-center gap-3 rounded-2xl bg-white px-7 py-4 text-base md:text-lg font-bold text-[var(--brand)] transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-70 overflow-hidden"
 >
-  {loading ? "Carregando..." : "Consultar Agora Grátis"}
-  <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[color:rgba(189,27,93,.12)] transition-transform duration-200 group-hover:translate-x-0.5">
+  <span className="hero-ctaLabel">
+    {loading ? "Carregando..." : "Consultar Agora Grátis"}
+  </span>
+
+  <span className="hero-ctaIcon inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[color:rgba(189,27,93,.12)] transition-transform duration-200 group-hover:translate-x-0.5">
     →
   </span>
 </button>
+
 
             </div>
 
