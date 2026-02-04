@@ -47,7 +47,7 @@ function buildWaUrl(phoneDigits: string, message: string) {
 async function fetchPhoneByDomain(domain: string, signal?: AbortSignal) {
   // tenta endpoint novo primeiro, depois compat antigo
   const candidates = [
-    `${API_BASE}zap?domain=${encodeURIComponent(domain)}`,
+    `${API_BASE}/zap?domain=${encodeURIComponent(domain)}`,
   ];
 
   let lastError: any = null;
