@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useWhatsApp } from "@/components/providers/WhatsAppProvider";
 
 type NavItem = { label: string; href: `#${string}` };
 
@@ -38,6 +39,11 @@ function scrollToHash(hash: string) {
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const { loading, open } = useWhatsApp();
+  const msg = useMemo(() => {
+    return "Olá! Quero negociar minha dívida e entender as opções disponíveis.";
+  }, []);
+
 
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -150,10 +156,10 @@ export default function Header() {
             aria-label="Ir para Home"
           >
             <span className="site-header__mark" aria-hidden="true">
-              Phb
+              C
             </span>
             <span className="site-header__brandWrap">
-              <span className="site-header__brand">Phb Logistics - Logistica e Servicos LTDA</span>
+              <span className="site-header__brand">Consultoria & Assesoria  LTDA</span>
               <span className="site-header__tag">Mega Feirão 2026</span>
             </span>
           </Link>
@@ -183,7 +189,7 @@ export default function Header() {
             <button
               type="button"
               className="site-header__cta"
-              onClick={() => goTo("#ajuda")}
+              onClick={() => open(msg)}
             >
               Falar com especialista
             </button>
@@ -244,7 +250,7 @@ export default function Header() {
           <button
             type="button"
             className="site-header__mobileCta"
-            onClick={() => goTo("#ajuda")}
+            onClick={() => open(msg)}
           >
             Falar com especialista
           </button>
