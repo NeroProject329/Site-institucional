@@ -16,7 +16,7 @@ export default function CookieBanner() {
     const saved = (localStorage.getItem(STORAGE_KEY) as Consent | null) ?? null;
     if (saved === "accepted" || saved === "rejected") return;
 
-    // 2) Se não tiver decisão, mostra depois de 3s (igual seu HTML antigo)
+    // 2) Se não tiver decisão, mostra depois de 3s
     const t = window.setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     return () => window.clearTimeout(t);
   }, []);
@@ -26,7 +26,6 @@ export default function CookieBanner() {
     setVisible(false);
   }
 
-  // Se não está visível, não renderiza nada (limpo e sem gambiarra de "hidden")
   if (!visible) return null;
 
   return (
@@ -34,8 +33,7 @@ export default function CookieBanner() {
       <div className="cookie-content">
         <div className="cookie-text">
           <p>
-            Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você
-            concorda com nossa{" "}
+            Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa{" "}
             <a href="/privacidade" className="cookie-link">
               Política de Privacidade
             </a>{" "}
@@ -48,19 +46,11 @@ export default function CookieBanner() {
         </div>
 
         <div className="cookie-actions">
-          <button
-            type="button"
-            className="cookie-btn cookie-reject"
-            onClick={() => save("rejected")}
-          >
+          <button type="button" className="cookie-btn cookie-reject" onClick={() => save("rejected")}>
             Rejeitar
           </button>
 
-          <button
-            type="button"
-            className="cookie-btn cookie-accept"
-            onClick={() => save("accepted")}
-          >
+          <button type="button" className="cookie-btn cookie-accept" onClick={() => save("accepted")}>
             Aceitar
           </button>
         </div>

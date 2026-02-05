@@ -159,7 +159,7 @@ export default function Header() {
               C
             </span>
             <span className="site-header__brandWrap">
-              <span className="site-header__brand">Consultoria & Assesoria  LTDA</span>
+              <span className="site-header__brand">Consultoria & Assessoria  LTDA</span>
               <span className="site-header__tag">Mega Feirão 2026</span>
             </span>
           </Link>
