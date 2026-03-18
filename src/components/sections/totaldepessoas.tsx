@@ -19,11 +19,11 @@ export default function TotalDePessoas() {
   // ✅ Edite aqui os números/textos finais (mantive no padrão QuiteJá)
   const metrics: Metric[] = [
     {
-      value: "+6,3",
+      value: "+1.1",
       unit: "milhões",
       description: (
         <>
-          Já ajudamos mais de <b>6,3 milhões de pessoas</b> a encontrarem
+          Já ajudamos mais de <b>1.1 milhões de pessoas</b> a encontrarem
           condições melhores e seguirem com mais tranquilidade.
         </>
       ),
@@ -38,12 +38,12 @@ export default function TotalDePessoas() {
       ),
     },
     {
-      value: "+ de R$ 16,6",
-      unit: "bilhões",
+      value: "+ de R$ 9,6",
+      unit: "Milhôes",
       description: (
         <>
           Pessoas atendidas já conquistaram mais de{" "}
-          <b style={{ whiteSpace: "nowrap" }}>R$ 16,6 bilhões em economia</b>{" "}
+          <b style={{ whiteSpace: "nowrap" }}>R$ 9,6 milhões em economia</b>{" "}
           em condições disponibilizadas.
         </>
       ),

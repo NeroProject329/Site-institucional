@@ -53,12 +53,12 @@ export default function Footer() {
                 />
               ) : (
                 <div className="qj-footer-logoMark" aria-hidden="true">
-                  <span>Phb</span>
+                  <span>CGP</span>
                 </div>
               )}
 
               <div className="qj-footer-brandText">
-                <div className="qj-footer-brandName">Phb Logistics - Logistica e Servicos LTDA</div>
+                <div className="qj-footer-brandName">Concontabil Gestao Publica LTDA</div>
                 <div className="qj-footer-brandDesc">
                   Orientação clara, atendimento humano e um processo 100% online — no seu tempo e com
                   segurança.
@@ -71,14 +71,14 @@ export default function Footer() {
                 <span className="qj-footer-ico" aria-hidden="true">
                   🪪
                 </span>
-                <span>CNPJ: 48.305.605/0001-17</span>
+                <span>CNPJ: 61.283.911/0001-68</span>
               </div>
               <div className="qj-footer-metaRow">
                 <span className="qj-footer-ico" aria-hidden="true">
                   📍
                 </span>
                 <span>
-                  Rua Isaltina Paula Cidade, Sala 04, São Judas Tadeu,  Parnaíba- PI, 64206-260
+                  Rua Herculano Nunes Teixeira 105 Casa do Empreendedor Budag,  Rio do Sul SC, 89165-478
                 </span>
               </div>
             </div>
@@ -163,7 +163,7 @@ export default function Footer() {
       <div className="qj-footer-bottom">
         <div className="container qj-footer-bottomInner">
           <p className="qj-footer-copy">
-            © {year} Phb Logistics - Logistica e Servicos LTDA.
+            © {year} Concontabil Gestao Publica LTDA.
           </p>
 
           <div className="qj-footer-legal">

@@ -3206,9 +3206,9 @@ Seção: <section id="avaliacao" ...>
 #avaliacao .ava-photoManual{
   position: absolute;
   left: 50%;
-  bottom: 128px;            /* 👈 gruda no chão (ajusta -28 / -48 se quiser) */
+  bottom: -28px;            /* 👈 gruda no chão (ajusta -28 / -48 se quiser) */
   transform: translateX(-50%);
-  height: 138%;             /* 👈 aumenta a mulher */
+  height: 118%;             /* 👈 aumenta a mulher */
   width: auto;
   max-width: none;
   display: block;
