@@ -175,7 +175,7 @@ export default function Hero() {
                 data-hero="title"
                 className="hero-titleGlow mt-5 text-balance text-4xl font-semibold tracking-tight text-white md:text-6xl"
                 >
-                Descontos Exclusivos,<span className="hero-gold">participe do Feirão 2026</span>e verifique ofertas especiais.
+                Descontos Exclusivos,<span className="hero-gold">participe do Feirão 2026</span> e verifique ofertas especiais.
               </h1>
 
               <p

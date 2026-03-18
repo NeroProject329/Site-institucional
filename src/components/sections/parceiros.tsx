@@ -42,7 +42,7 @@ const pillars: Pillar[] = [
   { key: "negociacao", title: "Negociação direta", desc: "Tratativa com foco em acordo viável.", Icon: Handshake },
   { key: "descontos", title: "Descontos estratégicos", desc: "Busca do melhor custo-benefício.", Icon: Percent },
   { key: "parcelamento", title: "Parcelamento flexível", desc: "Condições que cabem no seu mês.", Icon: CalendarClock },
-  { key: "cpf", title: "Regularização de pendências", desc: "Organização para voltar ao jogo.", Icon: BadgeCheck },
+  { key: "cpf", title: "Soluções financeiras", desc: "Organização para voltar ao jogo.", Icon: BadgeCheck },
   { key: "acordo", title: "Acordo formalizado", desc: "Clareza do que foi combinado.", Icon: FileText },
   { key: "juros", title: "Redução de encargos", desc: "Foco em juros e multas quando possível.", Icon: TrendingDown },
   { key: "analise", title: "Análise do seu caso", desc: "Leitura do cenário antes da decisão.", Icon: Search },
